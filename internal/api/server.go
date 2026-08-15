@@ -30,6 +30,9 @@ func (s *Server) registerRoutes() {
 	s.mux.HandleFunc("GET /stats", s.HandleGetStats)
 	s.mux.HandleFunc("GET /events", s.broadcaster.HandleSSE)
 	s.mux.HandleFunc("GET /dashboard", s.HandleDashboard)
+	s.mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+    http.Redirect(w, r, "/dashboard", http.StatusMovedPermanently)
+})
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
