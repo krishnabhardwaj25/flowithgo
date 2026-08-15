@@ -2,6 +2,8 @@
 
 A distributed background job queue built in Go — inspired by Sidekiq and BullMQ, built from scratch.
 
+**Live Demo:** https://flowithgo-production.up.railway.app/dashboard
+
 Instead of Redis, flowithgo uses PostgreSQL with `SELECT FOR UPDATE SKIP LOCKED` for concurrency-safe job claiming. This keeps the infrastructure simple (one database, no separate message broker) while remaining correct under concurrent workers.
 
 ---
