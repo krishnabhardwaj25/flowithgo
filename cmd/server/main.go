@@ -18,9 +18,8 @@ import (
 
 func main() {
 	logger.Init()
-    
-    // load .env if present (local dev), ignore error in production
-    godotenv.Load()
+
+	godotenv.Load()
 
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
@@ -36,7 +35,6 @@ func main() {
 	defer database.Close()
 
 	jobStore := store.NewJobStore(database)
-
 	server := api.NewServer(jobStore)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -45,13 +43,18 @@ func main() {
 	pool := worker.NewPool(5, jobStore, server.GetBroadcaster())
 	pool.Start(ctx)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	httpServer := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":" + port,
 		Handler: server,
 	}
 
 	go func() {
-		logger.L.Info("server starting", "port", 8080)
+		logger.L.Info("server starting", "port", port)
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.L.Error("server failed", "error", err.Error())
 			os.Exit(1)
